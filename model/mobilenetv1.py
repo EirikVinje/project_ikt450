@@ -26,7 +26,7 @@ class MobileNetV1(nn.Module):
                 nn.ReLU(inplace=True))
 
         self.convolution = nn.Sequential(
-            conv_bn(1, 32, 2),
+            conv_bn(3, 32, 2),
             conv_dw(32, 64, 1),
             conv_dw(64, 128, 2),
             conv_dw(128, 128, 1),
@@ -42,7 +42,7 @@ class MobileNetV1(nn.Module):
             conv_dw(1024, 1024, 1),
             nn.AdaptiveAvgPool2d(1))
         
-        self.fc = nn.Linear(1024, 11)
+        self.fc = nn.Linear(1024, 20)
 
     
     def forward(self, x):

@@ -1,4 +1,4 @@
- import os
+import os
 import tarfile
 import csv
 
@@ -23,7 +23,7 @@ def load_labels(batch_x, dataset):
     all_y = []
     
     print("reading labels...")
-    for i in tqdm(range(len(batch_x)):
+    for i in tqdm(range(len(batch_x))):
 
         x, filename = batch_x[i]
 
@@ -32,17 +32,14 @@ def load_labels(batch_x, dataset):
         if not label.empty:
 
             label = np.array(label.iloc[0].values[1:-1])
-            label = np.where(label == 1)[0][0]
     
-            if label != 19:
+            all_x.append(x)
+            all_y.append(label)
     
-                all_x.append(x)
-                all_y.append(label)
-            
     return all_x, all_y
 
 
-def load_images(batch, x_shape:tuple = (512, 512)):
+def load_images(batch, x_shape:tuple = (224, 224)):
 
     path_to_batch = f"/home/eirikmv/data/chestxray8/batch_{batch}/images"
     
@@ -65,9 +62,10 @@ def load_images(batch, x_shape:tuple = (512, 512)):
 
         img = cv2.resize(img, x_shape, interpolation=cv2.INTER_CUBIC)
         img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+        img = cv2.resize(img, x_shape)
+        
         img = Image.fromarray(img)
         
-        img = cv2.resize(img, x_shape)
         
         batch_x.append([img, file])
 
@@ -86,7 +84,7 @@ def load_data():
 
     data = {"train" : [[], []], "test" : [[], []], "validation" : [[], []]}
 
-    for i in range(0, 1):
+    for i in range(0, 4):
 
         batch_x = load_images(i)
         for settype in datasets:

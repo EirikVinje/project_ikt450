@@ -18,9 +18,11 @@ def load_labels(batch_x, dataset):
 
     path_to_labels = f"/home/eirikmv/data/chestxray8/labels/{dataset}_labels.csv" 
     labels = pd.read_csv(path_to_labels)
-
+    
     all_x = []
     all_y = []
+
+    no_findings = 0
     
     print("reading labels...")
     for i in tqdm(range(len(batch_x))):
@@ -32,9 +34,15 @@ def load_labels(batch_x, dataset):
         if not label.empty:
 
             label = np.array(label.iloc[0].values[1:-1])
-    
+
+            if label[-1] == 1:
+                no_findings += 1
+                continue
+            
             all_x.append(x)
-            all_y.append(label)
+            all_y.append(label[:-1])
+
+    print(f"Number of on findings : {no_findings}")
     
     return all_x, all_y
 
@@ -84,7 +92,7 @@ def load_data():
 
     data = {"train" : [[], []], "test" : [[], []], "validation" : [[], []]}
 
-    for i in range(0, 4):
+    for i in range(0, 12):
 
         batch_x = load_images(i)
         for settype in datasets:

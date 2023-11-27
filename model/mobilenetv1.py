@@ -3,7 +3,7 @@ import torch
 
 
 class MobileNetV1(nn.Module):
-    def __init__(self):
+    def __init__(self, n_features, n_channels):
         super(MobileNetV1, self).__init__()
 
         self.modelname = "MobileNETV1"
@@ -26,7 +26,7 @@ class MobileNetV1(nn.Module):
                 nn.ReLU(inplace=True))
 
         self.convolution = nn.Sequential(
-            conv_bn(3, 32, 2),
+            conv_bn(n_channels, 32, 2),
             conv_dw(32, 64, 1),
             conv_dw(64, 128, 2),
             conv_dw(128, 128, 1),
@@ -42,8 +42,10 @@ class MobileNetV1(nn.Module):
             conv_dw(1024, 1024, 1),
             nn.AdaptiveAvgPool2d(1))
         
-        self.fc = nn.Linear(1024, 20)
-
+        self.classifier = nn.Sequential(
+                    nn.Linear(1024, n_features),
+                    nn.Sigmoid()
+                    )
     
     def forward(self, x):
         
@@ -51,6 +53,6 @@ class MobileNetV1(nn.Module):
         
         x = x.view(x.shape[0], x.shape[1]*x.shape[2]*x.shape[3])
         
-        x = self.fc(x)
-        
+        x = self.classifier(x)
+
         return x

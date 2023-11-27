@@ -62,16 +62,17 @@ def accuracy_set(model, dataloader):
             
             predicted = model(x)
 
-            print(predicted)
-            print(predicted.shape)
+            # print(predicted)
+            # print(predicted.shape)
 
-            assert False
+            # assert False
             
-            acc = MultilabelAccuracy(num_labels=20).to(device)(predicted.to(device), y)
-            pre = MultilabelPrecision(num_labels=20).to(device)(predicted.to(device), y)
+            acc = MultilabelAccuracy(num_labels=19).to(device)(predicted.to(device), y)
+            pre = MultilabelPrecision(num_labels=19).to(device)(predicted.to(device), y)
 
             count += 1
             all_acc += acc
+            all_pre += pre
             
         total_acc = all_acc/count
         total_pre = all_pre/count
@@ -114,7 +115,7 @@ def evaluate_model(batch_size):
 
 if __name__ == "__main__":
 
-    batch_size = 1
+    batch_size = 64
     
     evaluate_model(batch_size)
 

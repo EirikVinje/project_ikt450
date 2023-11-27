@@ -14,7 +14,6 @@ from torchmetrics.classification import MultilabelAccuracy
 
 from mobilenetv1 import MobileNetV1
 
-
 class Xray_dataset(Dataset):
     
     def __init__(self, images, labels, test : bool):
@@ -57,11 +56,16 @@ def train(epochs, batch_size, lr):
     
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
+    n_channels = 3
+    
     data_dir = "/home/eirikmv/data/chestxray8/dataset"
     
     train_x, train_y = pickle.load(open(os.path.join(data_dir, "train.pkl"), "rb"))
     val_x, val_y = pickle.load(open(os.path.join(data_dir, "validation.pkl"), "rb"))
 
+    print(f"train size: {len(train_y)}") 
+    print(f"val size: {len(val_y)}")
+    
     train_dataloader = DataLoader(Xray_dataset(train_x, train_y, test = False), 
                                   batch_size=batch_size, 
                                   shuffle=True)
@@ -70,7 +74,7 @@ def train(epochs, batch_size, lr):
                                 batch_size=batch_size, 
                                 shuffle=True)
 
-    model = MobileNetV1().to(device)
+    model = MobileNetV1(len(train_y[0]), n_channels).to(device)
     
     criterion = nn.BCEWithLogitsLoss().to(device)
     optimizer = torch.optim.Adam(model.parameters(), lr=lr)
@@ -104,7 +108,6 @@ def train(epochs, batch_size, lr):
 
     torch.save(model, "model/model.pt")
     
-
 if __name__ == "__main__":
 
     epochs = 5

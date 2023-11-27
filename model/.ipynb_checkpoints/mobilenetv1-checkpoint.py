@@ -42,8 +42,10 @@ class MobileNetV1(nn.Module):
             conv_dw(1024, 1024, 1),
             nn.AdaptiveAvgPool2d(1))
         
-        self.fc = nn.Linear(1024, 20)
-
+        self.classifier = nn.Sequential(
+                    nn.Linear(1024, 19),
+                    nn.Sigmoid()
+                    )
     
     def forward(self, x):
         
@@ -51,6 +53,6 @@ class MobileNetV1(nn.Module):
         
         x = x.view(x.shape[0], x.shape[1]*x.shape[2]*x.shape[3])
         
-        x = self.fc(x)
-        
+        x = self.classifier(x)
+
         return x
